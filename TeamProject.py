@@ -9,7 +9,8 @@ def account():
         editaccount()
     elif option == 3:
         viewaccount()
-
+    elif option == 4:
+        quit()
     else:
          print("Choose valid option")
          account()
@@ -45,76 +46,112 @@ def editaccount():
 
 def editname():
     userid = int(input("Please enter user id "))
-    name = input("Please enter new Name ")
-    connection = sqlite3.connect('agency_database.db')
-    cursor = connection.cursor()
-    cursor1 = connection.cursor()
-    cursor.execute("update Login set name = ? where userid = ?", (name,userid))
-    print("Name updated successfully!")
-    cursor.commit()
-    cursor.close()
-    cursor1.execute("Select * from Login where userid = ?", userid)
-    result = cursor.fetchall()
-    data = result
-    print(data)
 
+    try:
+        name = input("Please enter new Name ")
+        connection = sqlite3.connect('agency_database.db')
+        cursor = connection.cursor()
+        cursor.execute("Select * from Login where UserID = ?", [userid])
+        result = cursor.fetchall()
+        data = result
+        print(data)
+        cursor.execute("update Login set Name = ? where UserID = ?", (name, userid))
+        connection.commit()
+        print("Name updated successfully!")
+        cursor.execute("Select * from Login where UserID = ?", [userid])
+        result = cursor.fetchall()
+        data = result
+        print(data)
+        cursor.close()
+    except sqlite3.error as error:
+        print("Please enter valid user id", error)
+    finally:
+        if connection:
+            connection.close()
     anykey = input("Enter any number to go back main menu : ")
     if anykey is not None:
         account()
 
 def editdob():
     userid = int(input("Please enter user id "))
-    dob = input("Please enter new DOB (dd/mm/yyyy) ")
-    connection = sqlite3.connect('agency_database.db')
-    cursor = connection.cursor()
-    cursor1 = connection.cursor()
-    cursor.execute("update Login set dob = ? where userid = ?", (dob,userid))
-    print("DOB updated successfully!")
-    cursor.commit()
-    cursor.close()
-    cursor1.execute("Select * from Login where userid = ?", userid)
-    result = cursor.fetchall()
-    data = result
-    print(data)
 
+    try:
+        dob = input("Please enter new dob(dd/mm/yyyy) ")
+        connection = sqlite3.connect('agency_database.db')
+        cursor = connection.cursor()
+        cursor.execute("Select * from Login where UserID = ?", [userid])
+        result = cursor.fetchall()
+        data = result
+        print(data)
+        cursor.execute("update Login set DOB = ? where UserID = ?", (dob, userid))
+        connection.commit()
+        print("DOB updated successfully!")
+        cursor.execute("Select * from Login where UserID = ?", [userid])
+        result = cursor.fetchall()
+        data = result
+        print(data)
+        cursor.close()
+    except sqlite3.error as error:
+        print("Please enter valid user id", error)
+    finally:
+        if connection:
+            connection.close()
     anykey = input("Enter any number to go back main menu : ")
     if anykey is not None:
         account()
 
 def editpn():
     userid = int(input("Please enter user id "))
-    phonenumber = input("Please enter new phone number (no space or special character eg.1234567890) ")
-    connection = sqlite3.connect('agency_database.db')
-    cursor = connection.cursor()
-    cursor1 = connection.cursor()
-    cursor.execute("update Login set phonenumber = ? where userid = ?", (phonenumber, userid))
-    print("Phone Number updated successfully!")
-    cursor.commit()
-    cursor.close()
-    cursor1.execute("Select * from Login where userid = ?", userid)
-    result = cursor.fetchall()
-    data = result
-    print(data)
 
+    try:
+        phonenumber = input("Please enter new phone number(no space, no special character) ")
+        connection = sqlite3.connect('agency_database.db')
+        cursor = connection.cursor()
+        cursor.execute("Select * from Login where UserID = ?", [userid])
+        result = cursor.fetchall()
+        data = result
+        print(data)
+        cursor.execute("update Login set PhoneNumber = ? where UserID = ?", (phonenumber, userid))
+        connection.commit()
+        print("Phone Number updated successfully!")
+        cursor.execute("Select * from Login where UserID = ?", [userid])
+        result = cursor.fetchall()
+        data = result
+        print(data)
+        cursor.close()
+    except sqlite3.error as error:
+        print("Please enter valid user id", error)
+    finally:
+        if connection:
+            connection.close()
     anykey = input("Enter any number to go back main menu : ")
     if anykey is not None:
         account()
 
 def editeid():
     userid = int(input("Please enter user id "))
-    emailid = input("Please enter new emailid  ")
-    connection = sqlite3.connect('agency_database.db')
-    cursor = connection.cursor()
-    cursor1 = connection.cursor()
-    cursor.execute("update Login set emailid = ? where userid = ?", (emailid, userid))
-    print("Email Id updated successfully!")
-    cursor.commit()
-    cursor.close()
-    cursor1.execute("Select * from Login where userid = ?", userid)
-    result = cursor.fetchall()
-    data = result
-    print(data)
 
+    try:
+        emailid = input("Please enter new Email Id ")
+        connection = sqlite3.connect('agency_database.db')
+        cursor = connection.cursor()
+        cursor.execute("Select * from Login where UserID = ?", [userid])
+        result = cursor.fetchall()
+        data = result
+        print(data)
+        cursor.execute("update Login set EmailId = ? where UserID = ?", (emailid, userid))
+        connection.commit()
+        print("Phone Number updated successfully!")
+        cursor.execute("Select * from Login where UserID = ?", [userid])
+        result = cursor.fetchall()
+        data = result
+        print(data)
+        cursor.close()
+    except sqlite3.error as error:
+        print("Please enter valid user id", error)
+    finally:
+        if connection:
+            connection.close()
     anykey = input("Enter any number to go back main menu : ")
     if anykey is not None:
         account()
