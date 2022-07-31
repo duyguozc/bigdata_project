@@ -1,64 +1,60 @@
 import sqlite3
+import datetime
 
-def account():
-    print('(1) View Account (2) Edit Account (3) Main Menu')
-    option = int(input("Option : "))
-    if option == 1:
-        viewaccount()
-    elif option == 2:
-        editaccount()
-    elif option == 3:
-        viewaccount()
-    elif option == 4:
-        quit()
-    else:
-         print("Choose valid option")
-         account()
+def account(user_name):
+    option = 0
+    while option != 3:
+        print('(1) View Account (2) Edit Account (3) Main Menu')
+        option = int(input("Option : "))
+        if option == 1:
+            viewaccount(user_name)
+        elif option == 2:
+            editaccount(user_name)
+        elif option == 3:
+            break
+        else:
+            print("Choose valid option")
 
 
-def viewaccount():
+
+def viewaccount(user_name):
     connection = sqlite3.connect('agency_database.db')
     cursor = connection.cursor()
-    cursor.execute("Select * from Login")
+    cursor.execute("Select Name, DOB, PhoneNumber, EmailId from Login where username = ?", (user_name,))
     results = cursor.fetchall()
     data = results
     print(data)
-    anykey = input("Enter any number to go back main menu : ")
 
-    if anykey is not None:
-        account()
 
-def editaccount():
+def editaccount(user_name):
     print(' Enter (1) Edit Name  (2) Edit DOB (3) Edit Phone Number (4) Edit EmailId')
     editoption = int(input("Option : "))
 
     if editoption == 1:
-        editname()
+        editname(user_name)
     elif editoption == 2:
-        editdob()
+        editdob(user_name)
     elif editoption == 3:
-        editpn()
+        editpn(user_name)
     elif editoption == 4:
-        editeid()
+        editeid(user_name)
     else:
         print("Please enter valid option")
-        editaccount()
 
-def editname():
-    userid = int(input("Please enter user id "))
+def editname(user_name):
 
     try:
         name = input("Please enter new Name ")
         connection = sqlite3.connect('agency_database.db')
         cursor = connection.cursor()
-        cursor.execute("Select * from Login where UserID = ?", [userid])
+        cursor.execute("Select Name, DOB, PhoneNumber, EmailId from Login where username = ?", [user_name])
         result = cursor.fetchall()
         data = result
         print(data)
-        cursor.execute("update Login set Name = ? where UserID = ?", (name, userid))
+        cursor.execute("update Login set Name = ? where username = ?", (name, user_name))
         connection.commit()
         print("Name updated successfully!")
-        cursor.execute("Select * from Login where UserID = ?", [userid])
+        cursor.execute("Select Name, DOB, PhoneNumber, EmailId from Login where username = ?", [user_name])
         result = cursor.fetchall()
         data = result
         print(data)
@@ -68,25 +64,28 @@ def editname():
     finally:
         if connection:
             connection.close()
-    anykey = input("Enter any number to go back main menu : ")
-    if anykey is not None:
-        account()
 
-def editdob():
-    userid = int(input("Please enter user id "))
+def editdob(user_name):
 
     try:
-        dob = input("Please enter new dob(dd/mm/yyyy) ")
+        while True:
+            dob = input("Please enter new dob(dd/mm/yyyy) ")
+            try:
+                dob = datetime.datetime.strptime(dob, "%d/%m/%Y")
+                break
+            except ValueError:
+                print("Error: must be format dd/mm/yyyy ")
+                continue
         connection = sqlite3.connect('agency_database.db')
         cursor = connection.cursor()
-        cursor.execute("Select * from Login where UserID = ?", [userid])
+        cursor.execute("Select Name, DOB, PhoneNumber, EmailId from Login where username = ?", [user_name])
         result = cursor.fetchall()
         data = result
         print(data)
-        cursor.execute("update Login set DOB = ? where UserID = ?", (dob, userid))
+        cursor.execute("update Login set DOB = ? where username = ?", (dob, user_name))
         connection.commit()
         print("DOB updated successfully!")
-        cursor.execute("Select * from Login where UserID = ?", [userid])
+        cursor.execute("Select Name, DOB, PhoneNumber, EmailId from Login where username = ?", [user_name])
         result = cursor.fetchall()
         data = result
         print(data)
@@ -96,25 +95,22 @@ def editdob():
     finally:
         if connection:
             connection.close()
-    anykey = input("Enter any number to go back main menu : ")
-    if anykey is not None:
-        account()
 
-def editpn():
-    userid = int(input("Please enter user id "))
+def editpn(user_name):
+
 
     try:
         phonenumber = input("Please enter new phone number(no space, no special character) ")
         connection = sqlite3.connect('agency_database.db')
         cursor = connection.cursor()
-        cursor.execute("Select * from Login where UserID = ?", [userid])
+        cursor.execute("Select Name, DOB, PhoneNumber, EmailId from Login where username = ?", [user_name])
         result = cursor.fetchall()
         data = result
         print(data)
-        cursor.execute("update Login set PhoneNumber = ? where UserID = ?", (phonenumber, userid))
+        cursor.execute("update Login set PhoneNumber = ? where username = ?", (phonenumber, user_name))
         connection.commit()
         print("Phone Number updated successfully!")
-        cursor.execute("Select * from Login where UserID = ?", [userid])
+        cursor.execute("Select Name, DOB, PhoneNumber, EmailId from Login where username = ?", [user_name])
         result = cursor.fetchall()
         data = result
         print(data)
@@ -124,37 +120,33 @@ def editpn():
     finally:
         if connection:
             connection.close()
-    anykey = input("Enter any number to go back main menu : ")
-    if anykey is not None:
-        account()
 
-def editeid():
-    userid = int(input("Please enter user id "))
+def editeid(user_name):
 
     try:
         emailid = input("Please enter new Email Id ")
         connection = sqlite3.connect('agency_database.db')
         cursor = connection.cursor()
-        cursor.execute("Select * from Login where UserID = ?", [userid])
+        cursor.execute("Select Name, DOB, PhoneNumber, EmailId from Login where username = ?", [user_name])
         result = cursor.fetchall()
         data = result
         print(data)
-        cursor.execute("update Login set EmailId = ? where UserID = ?", (emailid, userid))
+        cursor.execute("update Login set EmailId = ? where username = ?", (emailid, user_name))
         connection.commit()
         print("Phone Number updated successfully!")
-        cursor.execute("Select * from Login where UserID = ?", [userid])
+        cursor.execute("Select Name, DOB, PhoneNumber, EmailId from Login where username = ?", [user_name])
         result = cursor.fetchall()
         data = result
         print(data)
         cursor.close()
     except sqlite3.error as error:
-        print("Please enter valid user id", error)
+        print("Please enter valid user name", error)
     finally:
         if connection:
             connection.close()
-    anykey = input("Enter any number to go back main menu : ")
-    if anykey is not None:
-        account()
+    #anykey = input("Enter any number to go back main menu : ")
+    #if anykey is not None:
+    #    account()
 
-if __name__ == "__main__":
-    account()
+#if __name__ == "__main__":
+    #account()

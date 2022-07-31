@@ -4,6 +4,15 @@ import re
 
 import datetime
 
+import account_details as account_file
+
+import search_part as search_part
+
+import book
+
+from classes import Tour
+
+from classes import Booking
 
 new_cryptographic_list = []
 exist_cryptographic_list = []
@@ -50,180 +59,218 @@ def decrypto():
         i = convert.index(exist_cryptographic_list[j])
         cryptographic.append(usertype[i])
 
+def get_all_tours():
+    connection = sqlite3.connect('agency_database.db')
+    cursor = connection.cursor()
+    sql = 'SELECT * FROM Tour'
+    cursor.execute(sql)
+    tours = cursor.fetchall()
+    tour_objects = []
+    for t in tours:
+        tour = Tour(t)
+        tour_objects.append(tour)
+    connection.close()
+    return tour_objects
 
-a = 0
+def get_user_id_from_username(uname):
+    connection = sqlite3.connect('agency_database.db')
+    cursor = connection.cursor()
+    sql = 'SELECT UserID FROM Login WHERE username = ?'
+    cursor.execute(sql, [uname])
+    userid = cursor.fetchone()
+    connection.close()
+    return userid[0]
 
-while a == 0:
-    sql_conn = sqlite3.connect('agency_database.db')
-    cursor = sql_conn.cursor()
-    cursor.execute("SELECT UserID FROM Login;")
-    result_id = cursor.fetchall()
-    cursor.close()
 
-    for r in result_id:
-        for i in range(len(r)):
-            ID.append(r[i])
-    # print(ID)
+if __name__ == '__main__':
+    a = 0
 
-    cursor = sql_conn.cursor()
-    cursor.execute("SELECT UserName FROM Login;")
-    result_username = cursor.fetchall()
-    cursor.close()
+    while a == 0:
+        sql_conn = sqlite3.connect('agency_database.db')
+        cursor = sql_conn.cursor()
+        cursor.execute("SELECT UserID FROM Login;")
+        result_id = cursor.fetchall()
+        cursor.close()
 
-    for r in result_username:
-        for i in range(len(r)):
-            exist_username.append(r[i])
-    # print(exist_email)
+        for r in result_id:
+            for i in range(len(r)):
+                ID.append(r[i])
+        # print(ID)
 
-    cursor = sql_conn.cursor()
-    cursor.execute("SELECT Password FROM Login;")
-    result_crypto = cursor.fetchall()
-    cursor.close()
+        cursor = sql_conn.cursor()
+        cursor.execute("SELECT UserName FROM Login;")
+        result_username = cursor.fetchall()
+        cursor.close()
 
-    for r in result_crypto:
-        for i in range(len(r)):
-            exist_psw.append(r[i])
-    # print(exist_psw)
+        for r in result_username:
+            for i in range(len(r)):
+                exist_username.append(r[i])
+        # print(exist_email)
 
-    cursor = sql_conn.cursor()
-    cursor.execute("SELECT role FROM Login;")
-    result_role = cursor.fetchall()
-    cursor.close()
+        cursor = sql_conn.cursor()
+        cursor.execute("SELECT Password FROM Login;")
+        result_crypto = cursor.fetchall()
+        cursor.close()
 
-    for r in result_role:
-        for i in range(len(r)):
-            role.append(r[i])
+        for r in result_crypto:
+            for i in range(len(r)):
+                exist_psw.append(r[i])
+        # print(exist_psw)
 
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+        cursor = sql_conn.cursor()
+        cursor.execute("SELECT role FROM Login;")
+        result_role = cursor.fetchall()
+        cursor.close()
 
-    print("_____Welcome_____")
-    print("For Log In Press 1! ")
-    print("For Register Press 2!")
-    print("For Quit Press 3!")
-    b = 0
-    while b == 0:
-        try:
-            transaction = int(input("Selection:"))
-            if transaction == 1:
-                print("_____Log IN_____")
-                username = str(input("Username:"))
-                if username not in exist_username:
-                    print("This username cannot found! Please try again or Register first!")
-                else:
-                    z = exist_username.index(username)
-                    password = str(input("Password: ").strip().upper())
-                    # print(password)
-                    exist_cryptographic_list = list(exist_psw[z])
-                    decrypto()
-                    psw_exist = "".join([str(i) for i in cryptographic])
-                    # print(exist_psw)
-                    if password == psw_exist:
-                        c = 0
-                        while c == 0:
-                            if role[z] == "Customer":
-                                print("\nWelcome " + username)
-                                print("Account[1]")
-                                print("Search[2]")
-                                print("Book[3]")
-                                print("My Bookings[4]")
-                                print("Log Out[5]")
-                                d = 0
-                                while d == 0:
-                                    try:
-                                        selection = int(input("Please enter the number of the menu "
-                                                              "to select the action you want to do: "))
-                                        if selection == 5:
-                                            d = d + 1
-                                            c = c + 1
-                                            b = b + 1
-                                            print("You successfully Log Out!\n")
-                                    except ValueError:
-                                        print("You should enter a number!")
-                                        continue
-                                    else:
-                                        if selection < 1 or selection > 5:
-                                            print("You entered invalid data. Please enter a valid value.")
+        for r in result_role:
+            for i in range(len(r)):
+                role.append(r[i])
 
-                            if role[z] == "Agent":
-                                print("\nWelcome " + username)
-                                print("Search Customer[1]")
-                                print("Reports[2]")
-                                print("Log Out[3]")
+        regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 
-                                d = 0
-                                while d == 0:
-                                    try:
-                                        selection = int(input("Please enter the number of the menu "
-                                                              "to select the action you want to do: "))
-                                        if selection == 3:
-                                            d = d + 1
-                                            c = c + 1
-                                            b = b + 1
-                                            print("You successfully Log Out!\n")
-                                    except ValueError:
-                                        print("You should enter a number!")
-                                        continue
-                                    else:
-                                        if selection < 1 or selection > 3:
-                                            print("You entered invalid data. Please enter a valid value.")
-
+        print("_____Welcome_____")
+        print("For Log In Press 1! ")
+        print("For Register Press 2!")
+        print("For Quit Press 3!")
+        b = 0
+        while b == 0:
+            try:
+                transaction = int(input("Selection:"))
+                if transaction == 1:
+                    print("_____Log IN_____")
+                    username = str(input("Username:"))
+                    if username not in exist_username:
+                        print("This username cannot found! Please try again or Register first!")
                     else:
-                        print("You made an incorrect entry. Please check your username and password.")
+                        z = exist_username.index(username)
+                        password = str(input("Password: ").strip().upper())
+                        # print(password)
+                        exist_cryptographic_list = list(exist_psw[z])
+                        decrypto()
+                        psw_exist = "".join([str(i) for i in cryptographic])
+                        # print(exist_psw)
+                        if password == psw_exist:
+                            c = 0
+                            while c == 0:
+                                if role[z] == "Customer":
+                                    d = 0
+                                    while d == 0:
+                                        try:
+                                            print("\nWelcome " + username)
+                                            print("       Main Menu        ")
+                                            print("############################")
+                                            print("1. My Account")
+                                            print("2. Search a Tour")
+                                            print("3. Book a Tour")
+                                            print("4. My Bookings")
+                                            print("5. Quit")
+                                            print("############################")
+                                            selection = int(input("Please enter the number of the menu "
+                                                                  "to select the action you want to do: "))
 
-            elif transaction == 2:
-                print("_____REGISTER_____")
-                username = str(input("Username:"))
-                if username not in exist_username:
-                    password = str(input("Password: ").strip().upper())
-                    psw = list(password)
-                    crypto()
-                    crypto_psw = "".join([str(i) for i in new_cryptographic_list])
-                    name = str(input("Name: "))
-                    while True:
-                        dob = input("Date of Birth: ")
-                        try:
-                            dob = datetime.datetime.strptime(dob, "%d/%m/%Y")
-                            break
-                        except ValueError:
-                            print("Error: must be format dd/mm/yyyy ")
-                            continue
-                    while True:
-                        phone = input("Phone Number:")
-                        if not phone.isdigit():
-                            print("Invalid value entry! Please enter a valid phone number. ")
-                            continue
-                        elif len(phone) != 10:
-                            print("Invalid value entry! Please enter a valid phone number. ")
-                            continue
-                        else:
-                            break
-                    while True:
-                        email = str(input("Email:").lower())
-                        if not re.search(regex, email):
-                            print("Invalid Email! Please give valid email.")
-                        else:
-                            break
-                    print("You have successfully registered! You can log in now!")
-                    # print(crypto_psw)
-                    cursor = sql_conn.cursor()
-                    sql_insert_query = """INSERT INTO Login (UserName, Password, Role, Name, 
-                    DOB, PhoneNumber, EmailId) values (?,?,?,?,?,?,?);"""
-                    data_tuple = (username, crypto_psw, "Customer", name, dob, phone, email)
-                    cursor.execute(sql_insert_query, data_tuple)
-                    cursor.execute("COMMIT;")
-                    cursor.close()
-                    break
-                else:
-                    print("This username already exist. Please enter another username or Log In!")
-            elif transaction == 3:
-                a = a + 1
-                sql_conn.close()
+                                            if selection == 1:
+                                                account_file.account(username)
+                                            elif selection == 2:
+                                                search_part.search()
+                                            elif selection == 3:
+                                                user_id = get_user_id_from_username(username)
+                                                book.book_tour(user_id)
+                                            elif selection == 4:
+                                                user_id = get_user_id_from_username(username)
+                                                book.booking_edit_delete_operations(user_id)
+                                            elif selection == 5:
+                                                d = d + 1
+                                                c = c + 1
+                                                b = b + 1
+                                                print("You successfully Log Out!\n")
+                                        except ValueError:
+                                            print("You should enter a number!")
+                                            continue
+                                        else:
+                                            if selection < 1 or selection > 5:
+                                                print("You entered invalid data. Please enter a valid value.")
+                                if role[z] == "Agent":
+                                    print("\nWelcome " + username)
+                                    print("       Menu        ")
+                                    print("############################")
+                                    print("1. Search Customer")
+                                    print("2. Reports")
+                                    print("3. Log Out")
+                                    print("############################")
+                                    d = 0
+                                    while d == 0:
+                                        try:
+                                            selection = int(input("Please enter the number of the menu "
+                                                                  "to select the action you want to do: "))
+                                            if selection == 3:
+                                                d = d + 1
+                                                c = c + 1
+                                                b = b + 1
+                                                print("You successfully Log Out!\n")
+                                        except ValueError:
+                                            print("You should enter a number!")
+                                            continue
+                                        else:
+                                            if selection < 1 or selection > 3:
+                                                print("You entered invalid data. Please enter a valid value.")
 
-        except ValueError:
-            print("You should enter a number!")
-            continue
-        else:
-            if transaction < 1 or transaction > 3:
-                print("You entered invalid data. Please enter a valid value.")
+                        else:
+                            print("You made an incorrect entry. Please check your username and password.")
+
+                elif transaction == 2:
+                    print("_____REGISTER_____")
+                    username = str(input("Username:"))
+                    if username not in exist_username:
+                        password = str(input("Password: ").strip().upper())
+                        psw = list(password)
+                        crypto()
+                        crypto_psw = "".join([str(i) for i in new_cryptographic_list])
+                        name = str(input("Name: "))
+                        while True:
+                            dob = input("Date of Birth: ")
+                            try:
+                                dob = datetime.datetime.strptime(dob, "%d/%m/%Y")
+                                break
+                            except ValueError:
+                                print("Error: must be format dd/mm/yyyy ")
+                                continue
+                        while True:
+                            phone = input("Phone Number:")
+                            if not phone.isdigit():
+                                print("Invalid value entry! Please enter a valid phone number. ")
+                                continue
+                            elif len(phone) != 10:
+                                print("Invalid value entry! Please enter a valid phone number. ")
+                                continue
+                            else:
+                                break
+                        while True:
+                            email = str(input("Email:").lower())
+                            if not re.search(regex, email):
+                                print("Invalid Email! Please give valid email.")
+                            else:
+                                break
+                        print("You have successfully registered! You can log in now!")
+                        # print(crypto_psw)
+                        cursor = sql_conn.cursor()
+                        sql_insert_query = """INSERT INTO Login (UserName, Password, Role, Name, 
+                        DOB, PhoneNumber, EmailId) values (?,?,?,?,?,?,?);"""
+                        data_tuple = (username, crypto_psw, "Customer", name, dob, phone, email)
+                        cursor.execute(sql_insert_query, data_tuple)
+                        cursor.execute("COMMIT;")
+                        cursor.close()
+                        break
+                    else:
+                        print("This username already exist. Please enter another username or Log In!")
+                elif transaction == 3:
+                    a = a + 1
+                    sql_conn.close()
+
+            except ValueError:
+                print("You should enter a number!")
+                continue
             else:
-                b = b + 1
+                if transaction < 1 or transaction > 3:
+                    print("You entered invalid data. Please enter a valid value.")
+                else:
+                    b = b + 1
