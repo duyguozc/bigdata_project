@@ -219,4 +219,9 @@ def log_payment(book_obj, cursor, new_cost, transact_type):
     cursor.execute(insert_sql_payment, payment_tuple_without_id)
 
 def delete_booking(booking_id):
-    pass
+   sql = 'DELETE from Booking where id = ?'
+   connection = sqlite3.connect('agency_database.db')
+   cursor = connection.cursor()
+   cursor.execute(sql, (booking_id,))
+   connection.commit()
+   connection.close()
