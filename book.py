@@ -30,6 +30,19 @@ def get_tour_by_tour_id(tourid):
     connection.close()
     return tour
 
+def get_all_tours():
+    connection = sqlite3.connect('agency_database.db')
+    cursor = connection.cursor()
+    sql = 'SELECT * FROM Tour'
+    cursor.execute(sql)
+    tours = cursor.fetchall()
+    tour_objects = []
+    for t in tours:
+        tour = Tour(t)
+        tour_objects.append(tour)
+    connection.close()
+    return tour_objects
+
 def get_booking_list_of_user(user_id):
     connection = sqlite3.connect('agency_database.db')
     cursor = connection.cursor()
@@ -52,8 +65,8 @@ def add_booking(user_id, book_tuple, pay_list):
         booking_id = cursor.lastrowid
         pay_list.insert(1, booking_id)
         cursor.execute(insert_sql_payment, tuple(pay_list))
-        # book_tuple[0] = 3,  book_tuple[3] = number_of_people
-        update_tour_info(cursor, book_tuple[0], book_tuple[3])
+        # book_tuple[0] = 3,  book_tuple[2] = number_of_people
+        update_tour_info(cursor, book_tuple[0], book_tuple[2])
     except sqlite3.Error as er:
         print('SQLite error: %s' % (' '.join(er.args)))
         print("Exception class is: ", er.__class__)
@@ -69,15 +82,21 @@ def update_tour_info(cursor, tour_id, people_number):
 
 
 def print_tour(my_tour):
-    print("Tour Id: ", my_tour.id, end = ' ')
+    print("Tour Id: ", my_tour.label, end = ' ')
     print("Destination: ", my_tour.dest)
     print("Description: ",my_tour.desc)
     print("Start date: ",my_tour.st_date, "  End Date: ", my_tour.end_date)
     print("Total capacity: ",my_tour.total_seats,"  Available seats: ", my_tour.avail_seats)
-    print("Price per person: $%.2f: " % my_tour.fare)
+    print("Price per person: $%.2f " % my_tour.fare)
+    print()
 
 
-def book_tour(tour_label_list, user_id):
+def book_tour(user_id):
+    tour_label_list = []
+    user_id = 2
+    all_tours = get_all_tours()
+    for row in all_tours:
+        tour_label_list.append(row.label)
     print("************************")
     print("Book a Tour")
     print("1. Book with Tour Id")
@@ -96,35 +115,45 @@ def book_tour(tour_label_list, user_id):
                 print("You should enter a number!")
                 continue
     if option == 1:
-        tour_label = input("Enter Tour ID: ")
-        while not tour_label in tour_label_list:
-            tour_label = input("Tour ID doen't exist. Please enter an existing id: ")
-        record = get_tour_by_tour_label(tour_label)
-        tour = Tour(record)
-
-        fare = tour.fare
-        tour_id = tour.id
-        print("You chose the tour. Tour Information")
-        print_tour(tour)
-        no_of_people=int(input("Please enter number of people to attend: "))
-        while no_of_people > tour.avail_seats:
-            no_of_people = int(input("It exceeds available seats! Enter smaller number: "))
-        total_price = fare * no_of_people
-        print("Your total total_price is $%.2f"  % (total_price))
-        proceed = input("Do you want to proceed payment?(y/n)")
-        if proceed.lower() == "y":
-            card_no, cvv, expire_date = prompt_card_info()
-            exp_date = datetime.strptime(expire_date, "%d/%m/%Y").date()
-            transaction_date = datetime.now()
-            transaction_date_str = transaction_date.strftime("%d/%m/%Y %H:%M:%S")
-            transaction_type = "sale"
-
-            booking_tuple = (tour_id, user_id, no_of_people, total_price)
-            payment_list = [user_id, tour_id, card_no, cvv, transaction_date, total_price, transaction_date_str, transaction_type]
-            add_booking(user_id, booking_tuple, payment_list)
-            print("You sucessfully booked from the tour.")
+        perform_booking(tour_label_list, user_id)
     elif option==2:
-        print(tour_label_list)
+        #Book without Tour Id
+        all_objects = get_all_tours()
+        for tour_object in all_objects:
+            print_tour(tour_object)
+        perform_booking(tour_label_list, user_id)
+    elif option==3:
+        return
+
+
+def perform_booking(tour_label_list, user_id):
+    tour_label = input("Enter Tour ID: ")
+    while not tour_label in tour_label_list:
+        tour_label = input("Tour ID doen't exist. Please enter an existing id: ")
+    record = get_tour_by_tour_label(tour_label)
+    tour = Tour(record)
+    fare = tour.fare
+    tour_id = tour.id
+    print("You chose the tour. Tour Information")
+    print_tour(tour)
+    no_of_people = int(input("Please enter number of people to attend: "))
+    while no_of_people > tour.avail_seats:
+        no_of_people = int(input("It exceeds available seats! Enter smaller number: "))
+    total_price = fare * no_of_people
+    print("Your total total_price is $%.2f" % (total_price))
+    proceed = input("Do you want to proceed payment?(y/n)")
+    if proceed.lower() == "y":
+        card_no, cvv, expire_date = prompt_card_info()
+        exp_date = datetime.strptime(expire_date, "%d/%m/%Y").date()
+        transaction_date = datetime.now()
+        transaction_date_str = transaction_date.strftime("%d/%m/%Y %H:%M:%S")
+        transaction_type = "sale"
+
+        booking_tuple = (tour_id, user_id, no_of_people, total_price)
+        payment_list = [user_id, tour_id, card_no, cvv, transaction_date, total_price, transaction_date_str,
+                        transaction_type]
+        add_booking(user_id, booking_tuple, payment_list)
+        print("You sucessfully booked from the tour.")
 
 
 def prompt_card_info():
