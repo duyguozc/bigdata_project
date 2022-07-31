@@ -19,10 +19,7 @@ def get_all_tours():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print("test")
-    tour_labels = []
-    all_tours = get_all_tours()
-    for row in all_tours:
-        tour_labels.append(row.label)
+    user_id = 2
 
     print("       Customer Menu        ")
     print("############################")
@@ -47,10 +44,9 @@ if __name__ == '__main__':
             else:
                 error = False
     if menu == 3:
-        user_id = 1
-        book.book_tour(tour_labels, user_id)
+        book.book_tour(user_id)
     elif menu == 4:
-        all_bookings = book.get_booking_list_of_user(1)
+        all_bookings = book.get_booking_list_of_user(user_id)
         index = 1;
         for book_item in all_bookings:
             tour = book.get_tour_by_tour_id(book_item.tour_id)
@@ -72,11 +68,6 @@ if __name__ == '__main__':
             delete = input("Are you sure? (y/n)")
             if delete.lower() == 'y':
                 book.delete_booking(selected_book.id)
-
-
-
-
-
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
