@@ -17,7 +17,7 @@ def get_all_tours():
     return tour_objects
 
 # Press the green button in the gutter to run the script.
-if __name__ == '__main__':
+def start():
     print("test")
     user_id = 2
 
