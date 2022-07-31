@@ -68,6 +68,7 @@ if __name__ == '__main__':
             delete = input("Are you sure? (y/n)")
             if delete.lower() == 'y':
                 book.delete_booking(selected_book.id)
+                print("Your booking is deleted.")
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
