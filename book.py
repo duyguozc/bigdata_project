@@ -253,7 +253,7 @@ def booking_edit_delete_operations(user_id):
         index = 1;
         for book_item in all_bookings:
             tour = get_tour_by_tour_id(book_item.tour_id)
-            print("     (", index, ")   ")
+            print("      (", index, ")   ")
             print("     BOOK INFO      ")
             print("Number of people to attend: ", book_item.number_of_people)
             print("Total price: $%.2f" % book_item.total_price)
