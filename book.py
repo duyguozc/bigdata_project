@@ -77,6 +77,7 @@ def add_booking(user_id, book_tuple, pay_list):
         cursor.execute(insert_sql_payment, tuple(pay_list))
         # book_tuple[0] = 3,  book_tuple[2] = number_of_people
         reduce_tour_capacity(cursor, book_tuple[0], book_tuple[2])
+        print("You successfully booked the tour.")
     except sqlite3.Error as er:
         print('SQLite error: %s' % (' '.join(er.args)))
         print("Exception class is: ", er.__class__)
@@ -149,7 +150,7 @@ def perform_booking(tour_label_list, user_id):
     tour_label = input("Enter Tour ID: ")
     while not tour_label.upper() in tour_label_list:
         tour_label = input("Tour ID doen't exist. Please enter an existing id: ")
-    record = get_tour_by_tour_label(tour_label)
+    record = get_tour_by_tour_label(tour_label.upper())
     tour = Tour(record)
     fare = tour.fare
     tour_id = tour.id
@@ -162,18 +163,17 @@ def perform_booking(tour_label_list, user_id):
     print("Your total total_price is $%.2f" % (total_price))
     proceed = input("Do you want to proceed payment?(y/n)")
     if proceed.lower() == "y":
-        card_no, cvv, expire_date = prompt_card_info()
+        fullname, card_no, cvv, expire_date = prompt_card_info()
         exp_date = datetime.strptime(expire_date, "%d/%m/%Y").date()
+        exp_date_str = exp_date.strftime("%d/%m/%Y")
         transaction_date = datetime.now()
         transaction_date_str = transaction_date.strftime("%d/%m/%Y %H:%M:%S")
         transaction_type = "sale"
 
         booking_tuple = (tour_id, user_id, no_of_people, total_price)
-        payment_list = [user_id, tour_id, card_no, cvv, transaction_date, total_price, transaction_date_str,
+        payment_list = [user_id, fullname, card_no, cvv, exp_date_str, total_price, transaction_date_str,
                         transaction_type]
         add_booking(user_id, booking_tuple, payment_list)
-        print("You sucessfully booked from the tour.")
-
 
 def edit_booking(booking_id):
     connection = sqlite3.connect('agency_database.db')
@@ -220,21 +220,24 @@ def prompt_card_info():
         expire_date = input("Enter expire date(dd/mm/yyyy): ")
         is_match = re.fullmatch(date_regex, expire_date)
     print("---------------")
-    return card_no, cvv, expire_date
+    return fullname, card_no, cvv, expire_date
 
 
 def log_payment(book_obj, cursor, new_cost, transact_type):
     payment_sql = 'SELECT * FROM Payment WHERE booking_id = ?'
     cursor.execute(payment_sql, (book_obj.id,))
     payment = cursor.fetchone()
-    payment_array = np.asarray(payment)
-    payment_array[7] = new_cost
-    payment_array[9] = transact_type
-    tran_date = datetime.now()
-    tran_date_str = tran_date.strftime("%d/%m/%Y %H:%M:%S")
-    payment_array[8] = tran_date_str
-    payment_tuple_without_id = tuple(payment_array[1:10]) #payment_array[1:10] #index 1 included, 10 excluded
-    cursor.execute(insert_sql_payment, payment_tuple_without_id)
+    if payment != None:
+        payment_array = np.asarray(payment)
+        payment_array[7] = new_cost
+        payment_array[9] = transact_type
+        tran_date = datetime.now()
+        tran_date_str = tran_date.strftime("%d/%m/%Y %H:%M:%S")
+        payment_array[8] = tran_date_str
+        payment_tuple_without_id = tuple(payment_array[1:10]) #payment_array[1:10] #index 1 included, 10 excluded
+        cursor.execute(insert_sql_payment, payment_tuple_without_id)
+    else:
+        print("No payment information found for this booking.")
 
 def delete_booking(selected_book):
    sql = 'DELETE from Booking where id = ?'
@@ -278,3 +281,5 @@ def booking_edit_delete_operations(user_id):
                 error = False
             else:
                 print('Invalid number. Please choose from booking list!')
+    else:
+        print("You have no bookings yet.")
