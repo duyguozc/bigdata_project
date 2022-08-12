@@ -70,5 +70,16 @@ def edit_tour(id, sql):
     connection.commit()
     connection.close()
 
+def delete_tour(id):
+    answer = input("Are you sure to delete the tour? (y/n)")
+    if answer == 'y':
+        sql = 'DELETE from Tour where id = ?'
+        connection = sqlite3.connect('agency_database.db')
+        cursor = connection.cursor()
+        cursor.execute(sql, [id])
+        connection.commit()
+        connection.close()
+
+
 if __name__ == '__main__':
-    update_delete_tour(2)
+    update_delete_tour(5)
