@@ -96,7 +96,7 @@ def increase_tour_capacity(cursor, tour_id, diff_count):
     cursor.execute(tour_sql, (tour_id,))
 
 def print_tour(my_tour):
-    print("Tour Id: ", my_tour.label, end = ' ')
+    print("Tour Id: ", my_tour.label, end =  )
     print("Destination: ", my_tour.dest)
     print("Description: ",my_tour.desc)
     print("Start date: ",my_tour.st_date, "  End Date: ", my_tour.end_date)
