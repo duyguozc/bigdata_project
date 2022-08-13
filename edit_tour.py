@@ -81,5 +81,3 @@ def delete_tour(id):
         connection.close()
 
 
-if __name__ == '__main__':
-    update_delete_tour(5)

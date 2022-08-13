@@ -19,3 +19,17 @@ class Booking:
     self.number_of_people = booking_tuple[3]
     self.total_price = booking_tuple[4]
 
+
+class Payment:
+  def __init__(self, payment_tuple):
+    self.user_id = payment_tuple[1]
+    self.booking_id = payment_tuple[2]
+    self.name = payment_tuple[3]
+    self.card_number =  payment_tuple[4]
+    self.cvv = payment_tuple[5]
+    self.expiry_date = payment_tuple[6]
+    self.amount = payment_tuple[7]
+    self.transaction_date = payment_tuple[8]
+    self.transaction_type = payment_tuple[9]
+
+
