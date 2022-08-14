@@ -17,25 +17,33 @@ def retrieve_payment_data():
     return df
 
 
-def generate_monthly_sales_report():
+def generate_monthly_sales_report(year):
     df = retrieve_payment_data()
     df = df[df['transaction_type'] == 'sale']
     data_fr_index = pd.DatetimeIndex(df['transaction_date'], dayfirst=True)
+    year_index = data_fr_index.year
+    df['year'] = year_index
+    df = df[df['year'] == year]
+    month_index = data_fr_index.month
     month_index = data_fr_index.month
     df['month'] = month_index
     monthly_sales = df.groupby(['month'], as_index=False)['amount'].sum()
     print(monthly_sales)
     plt.bar(monthly_sales['month'], monthly_sales['amount'], width=0.4)
+    plt.xticks(np.arange(0, 13, 1.0))
     plt.xlabel("Months")
-    plt.ylabel("Sale Amount")
-    plt.title("Total sale amount for months")
+    plt.ylabel("Sales Total $")
+    plt.title("Total Profit for Months")
     plt.show()
 
 
-def generate_quarterly_sales_report():
+def generate_quarterly_sales_report(year):
     df = retrieve_payment_data()
     df = df[df['transaction_type'] == 'sale']
     data_fr_index = pd.DatetimeIndex(df['transaction_date'], dayfirst=True)
+    year_index = data_fr_index.year
+    df['year'] = year_index
+    df = df[df['year'] == year]
     month_index = data_fr_index.month
     df['month'] = month_index
     conditions = [(df['month'] >= 1) & (df['month'] <= 3),
@@ -45,18 +53,25 @@ def generate_quarterly_sales_report():
                   ]
     values =  [1, 2, 3, 4]
     df['quarter'] = np.select(conditions, values)
-
-
-
-
-
-    monthly_sales = df.groupby(['month'], as_index=False)['amount'].sum()
-    print(monthly_sales)
-    plt.bar(monthly_sales['month'], monthly_sales['amount'], width=0.4)
-    plt.xlabel("Months")
-    plt.ylabel("Sale Amount")
-    plt.title("Total sale amount for months")
+    quarterly_sales = df.groupby(['quarter']).agg({'amount': ['sum']})
+    quarterly_sales.columns = ['amount']
+    quarterly_sales = quarterly_sales.reset_index()
+    print(quarterly_sales)
+    plt.bar(quarterly_sales['quarter'], quarterly_sales['amount'], width=0.2)
+    plt.xticks(np.arange(0, 5, 1.0))
+    plt.xlabel("Quarters")
+    plt.ylabel("Sales Total $")
+    plt.title("Total Profit for each Quarter in a Year")
     plt.show()
+
+def get_top_3_popular_destination():
+    sql = "SELECT Payment.booking_id as booking_id " \
+          " Payment.transaction_date as transaction_date " \
+          " Payment.transaction_date as transaction_date " \
+          "FROM Payment" \
+
+
+
 
 
 def retrieve_all_payment_info():
@@ -70,4 +85,4 @@ def retrieve_all_payment_info():
     return payments
 
 if __name__ == '__main__':
-    generate_monthly_sales_report()
+    generate_monthly_sales_report(2022)
