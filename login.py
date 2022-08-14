@@ -14,16 +14,6 @@ from classes import Tour
 
 from classes import Booking
 
-new_cryptographic_list = []
-exist_cryptographic_list = []
-cryptographic = []
-email = []
-exist_username = []
-exist_psw = []
-psw = []
-role = []
-ID = []
-
 
 def create():
     for j in range(len(exist_username)):
@@ -59,6 +49,7 @@ def decrypto():
         i = convert.index(exist_cryptographic_list[j])
         cryptographic.append(usertype[i])
 
+
 def get_all_tours():
     connection = sqlite3.connect('agency_database.db')
     cursor = connection.cursor()
@@ -71,6 +62,7 @@ def get_all_tours():
         tour_objects.append(tour)
     connection.close()
     return tour_objects
+
 
 def get_user_id_from_username(uname):
     connection = sqlite3.connect('agency_database.db')
@@ -86,6 +78,17 @@ if __name__ == '__main__':
     a = 0
 
     while a == 0:
+        new_cryptographic_list = []
+        exist_cryptographic_list = []
+        cryptographic = []
+        email = []
+        exist_username = []
+        exist_psw = []
+        psw = []
+        role = []
+        ID = []
+        ag_un = []
+
         sql_conn = sqlite3.connect('agency_database.db')
         cursor = sql_conn.cursor()
         cursor.execute("SELECT UserID FROM Login;")
@@ -153,10 +156,10 @@ if __name__ == '__main__':
                             c = 0
                             while c == 0:
                                 if role[z] == "Customer":
+                                    print("\nWelcome " + username)
                                     d = 0
                                     while d == 0:
                                         try:
-                                            print("\nWelcome " + username)
                                             print("       Main Menu        ")
                                             print("############################")
                                             print("1. My Account")
@@ -182,7 +185,9 @@ if __name__ == '__main__':
                                                 d = d + 1
                                                 c = c + 1
                                                 b = b + 1
+                                                sql_conn.close()
                                                 print("You successfully Log Out!\n")
+                                                break
                                         except ValueError:
                                             print("You should enter a number!")
                                             continue
@@ -191,27 +196,120 @@ if __name__ == '__main__':
                                                 print("You entered invalid data. Please enter a valid value.")
                                 if role[z] == "Agent":
                                     print("\nWelcome " + username)
-                                    print("       Menu        ")
-                                    print("############################")
-                                    print("1. Search Customer")
-                                    print("2. Reports")
-                                    print("3. Log Out")
-                                    print("############################")
                                     d = 0
                                     while d == 0:
                                         try:
+                                            print("       Menu        ")
+                                            print("############################")
+                                            print("1. Search Customer")
+                                            print("2. Log Out")
+                                            print("############################")
                                             selection = int(input("Please enter the number of the menu "
                                                                   "to select the action you want to do: "))
-                                            if selection == 3:
+                                            if selection == 2:
                                                 d = d + 1
                                                 c = c + 1
                                                 b = b + 1
                                                 print("You successfully Log Out!\n")
+                                                break
                                         except ValueError:
                                             print("You should enter a number!")
                                             continue
                                         else:
-                                            if selection < 1 or selection > 3:
+                                            if selection < 1 or selection > 2:
+                                                print("You entered invalid data. Please enter a valid value.")
+                                if role[z] == "Admin":
+                                    print("\nWelcome " + username)
+                                    d = 0
+                                    while d == 0:
+                                        try:
+                                            print("       Menu        ")
+                                            print("############################")
+                                            print("1. Manage Agents")
+                                            print("2. Manage Tours")
+                                            print("3. Reports")
+                                            print("4. Log Out")
+                                            print("############################")
+                                            selection = int(input("Please enter the number of the menu "
+                                                                  "to select the action you want to do: "))
+                                            if selection == 1:
+                                                e = 0
+                                                while e == 0:
+                                                    try:
+                                                        print("\n############################")
+                                                        print("1. Add Agent")
+                                                        print("2. Delete Agent")
+                                                        print("3. Main Menu")
+                                                        sub_selection = int(input("Please enter the number of the "
+                                                                                  "option to select the action you want"
+                                                                                  " to do: "))
+                                                        if sub_selection == 1:
+                                                            sub_uname = str(input("Username:"))
+                                                            if sub_uname not in exist_username:
+                                                                password = str(input("Password: ").strip().upper())
+                                                                psw = list(password)
+                                                                crypto()
+                                                                crypto_psw = "".join(
+                                                                    [str(i) for i in new_cryptographic_list])
+                                                                ag_dob='01/01/1900'
+                                                                ag_dob=datetime.datetime.strptime(ag_dob, "%d/%m/%Y")
+                                                                print("Agent added successfully!")
+                                                                cursor = sql_conn.cursor()
+                                                                sql_insert_query = """INSERT INTO Login (UserName, 
+                                                                Password, Role, Name, DOB, PhoneNumber, EmailId) values 
+                                                                (?,?,?,?,?,?,?);"""
+                                                                data_tuple = (sub_uname, crypto_psw, "Agent", sub_uname,
+                                                                              ag_dob, "9999", "agent@agent.com")
+                                                                cursor.execute(sql_insert_query, data_tuple)
+                                                                cursor.execute("COMMIT;")
+                                                                cursor.close()
+                                                                break
+                                                            else:
+                                                                print("This agent already exist!\n")
+                                                                break
+                                                        if sub_selection == 2:
+                                                            agent = "Agent"
+                                                            cursor = sql_conn.cursor()
+                                                            cursor.execute("SELECT UserName FROM Login where Role = 'Agent'")
+                                                            agent_usernames = cursor.fetchall()
+                                                            cursor.close()
+
+                                                            for r in agent_usernames:
+                                                                for i in range(len(r)):
+                                                                    ag_un.append(r[i])
+                                                            print("Agents:")
+                                                            print(ag_un)
+                                                            del_agent = str(input("Please enter the username of the "
+                                                                                  "agent you wish to delete: "))
+                                                            if del_agent not in ag_un:
+                                                                print("Agent cannot found!")
+                                                            else:
+                                                                cursor = sql_conn.cursor()
+                                                                cursor.execute("DELETE from Login where UserName = ?",
+                                                                               [del_agent])
+                                                                cursor.execute("COMMIT;")
+                                                                print("Record deleted successfully ")
+                                                                cursor.close()
+                                                        elif sub_selection == 3:
+                                                            e = e + 1
+                                                    except ValueError:
+                                                        print("You should enter a number!")
+                                                        continue
+                                                    else:
+                                                        if selection < 1 or selection > 3:
+                                                            print(
+                                                                "You entered invalid data. Please enter a valid value.")
+                                            elif selection == 4:
+                                                d = d + 1
+                                                c = c + 1
+                                                b = b + 1
+                                                print("You successfully Log Out!\n")
+                                                break
+                                        except ValueError:
+                                            print("You should enter a number!")
+                                            continue
+                                        else:
+                                            if selection < 1 or selection > 2:
                                                 print("You entered invalid data. Please enter a valid value.")
 
                         else:
@@ -227,7 +325,7 @@ if __name__ == '__main__':
                         crypto_psw = "".join([str(i) for i in new_cryptographic_list])
                         name = str(input("Name: "))
                         while True:
-                            dob = input("Date of Birth: ")
+                            dob = input("Date of Birth(dd/mm/yyy): ")
                             try:
                                 dob = datetime.datetime.strptime(dob, "%d/%m/%Y")
                                 break
@@ -251,7 +349,6 @@ if __name__ == '__main__':
                             else:
                                 break
                         print("You have successfully registered! You can log in now!")
-                        # print(crypto_psw)
                         cursor = sql_conn.cursor()
                         sql_insert_query = """INSERT INTO Login (UserName, Password, Role, Name, 
                         DOB, PhoneNumber, EmailId) values (?,?,?,?,?,?,?);"""
