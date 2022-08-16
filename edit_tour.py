@@ -49,12 +49,12 @@ def update_delete_tour(id):
             else:
                 edit_sql = edit_sql + ' , fare = ' + str(fare);
 
-        details = input("Enter new details or press ENTER to skip : ")
+        details = input("Enter new description or press ENTER to skip : ")
         if details != '':
             if edit_sql == '':
-                edit_sql = 'UPDATE Tour SET details = ' + str(details)
+                edit_sql = 'UPDATE Tour SET description = ' + '\''+ str(details) + '\''
             else:
-                edit_sql = edit_sql + ' , details = ' + str(details);
+                edit_sql = edit_sql + ' , description = ' + '\'' + str(details) + '\''
 
         if edit_sql != '':
             edit_sql = edit_sql + ' WHERE id = ?'
@@ -79,5 +79,3 @@ def delete_tour(id):
         cursor.execute(sql, [id])
         connection.commit()
         connection.close()
-
-

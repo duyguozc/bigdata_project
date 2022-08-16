@@ -14,6 +14,11 @@ from classes import Tour
 
 from classes import Booking
 
+import search_by_agent as search_by_agent
+
+import Add_Tour
+
+import edit_tour
 
 def create():
     for j in range(len(exist_username)):
@@ -206,7 +211,9 @@ if __name__ == '__main__':
                                             print("############################")
                                             selection = int(input("Please enter the number of the menu "
                                                                   "to select the action you want to do: "))
-                                            if selection == 2:
+                                            if selection == 1:
+                                                search_by_agent.search_agent()
+                                            elif selection == 2:
                                                 d = d + 1
                                                 c = c + 1
                                                 b = b + 1
@@ -296,9 +303,38 @@ if __name__ == '__main__':
                                                         print("You should enter a number!")
                                                         continue
                                                     else:
-                                                        if selection < 1 or selection > 3:
+                                                        if sub_selection < 1 or sub_selection > 3:
                                                             print(
                                                                 "You entered invalid data. Please enter a valid value.")
+                                            elif selection == 2:
+                                                e = 0
+                                                while e == 0:
+                                                    try:
+                                                        print("\n############################")
+                                                        print("1. Add Tour")
+                                                        print("2. Update/Delete Tour")
+                                                        print("3. Main Menu")
+                                                        sub = int(input("Please enter the number of the menu "
+                                                                              "to select the action you want to do: "))
+                                                        if sub == 1:
+                                                            Add_Tour.addtour()
+                                                        elif sub == 2:
+                                                            all_objects = book.get_all_tours()
+                                                            for tour_object in all_objects:
+                                                                book.print_tour(tour_object)
+                                                            tour_label=input("Please enter the tour label you want to update/delete: ")
+                                                            tour = book.get_tour_by_tour_label(tour_label)
+                                                            edit_tour.update_delete_tour(tour[0])
+                                                        else:
+                                                            e = e + 1
+                                                    except ValueError:
+                                                        print("You should enter a number!")
+                                                        continue
+                                                    else:
+                                                        if sub < 1 or sub > 3:
+                                                            print(
+                                                                "You entered invalid data. Please enter a valid value.")
+
                                             elif selection == 4:
                                                 d = d + 1
                                                 c = c + 1
