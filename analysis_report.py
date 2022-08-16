@@ -57,10 +57,14 @@ def generate_quarterly_sales_report(year):
     quarterly_sales.columns = ['amount']
     quarterly_sales = quarterly_sales.reset_index()
     print(quarterly_sales)
+    """
     plt.bar(quarterly_sales['quarter'], quarterly_sales['amount'], width=0.2)
     plt.xticks(np.arange(0, 5, 1.0))
     plt.xlabel("Quarters")
     plt.ylabel("Sales Total $")
+    """
+    plt.pie(quarterly_sales['amount'], labels=quarterly_sales['quarter'])
+
     plt.title("Total Profit for each Quarter in a Year")
     plt.show()
 
@@ -97,7 +101,6 @@ def get_top_3_popular_destination():
     grouped = grouped.sort_values('count', ascending=False)
     top3_dest = grouped.head(3)
     print(top3_dest)
-
     plt.bar(top3_dest['destination'], top3_dest['count'], width=0.3)
     plt.ylabel("Booking Amount")
     plt.title("Top 3 Destinations")
@@ -118,13 +121,10 @@ def show_report_menu():
     select = 0
     while select != 7:
         print("****** Reports *******")
-        print("1. Get Monthly Sales report")
-        print("2. Get Quarter Sales report")
-        print("3. Get Most Popular 3 Destinations Report")
-        print("4. Export Monthly Sales Report")
-        print("5. Export Quarter Sales Report")
-        print("6. Export Most Popular 3 Destinations Report")
-        print("7. Return to Main Menu")
+        print("1. Get/Export Monthly Sales report")
+        print("2. Get/Export Quarter Sales report")
+        print("3. Get/Export Most Popular 3 Destinations Report")
+        print("4. Return to Main Menu")
         print("**********************")
         error = True
         while error:
@@ -137,7 +137,6 @@ def show_report_menu():
         if select == 1:
             year = get_year()
             generate_monthly_sales_report(year)
-            print("Do you want ??")
         elif select == 2:
             year = get_year()
             generate_quarterly_sales_report(year)
