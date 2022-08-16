@@ -33,7 +33,7 @@ def generate_monthly_sales_report(year):
     plt.xticks(np.arange(0, 13, 1.0))
     plt.xlabel("Months")
     plt.ylabel("Sales Total $")
-    plt.title("Total Profit for Months")
+    plt.title("Profit by Monthly Basis")
     plt.show()
 
 
@@ -65,13 +65,43 @@ def generate_quarterly_sales_report(year):
     plt.show()
 
 def get_top_3_popular_destination():
-    sql = "SELECT Payment.booking_id as booking_id " \
-          " Payment.transaction_date as transaction_date " \
-          " Payment.transaction_date as transaction_date " \
-          "FROM Payment" \
+    sql = "SELECT Payment.booking_id as booking_id, " \
+                " Payment.transaction_date as transaction_date, " \
+                " Payment.transaction_type as transaction_type, " \
+                " Booking.tour_id as tour_id, " \
+                " Tour.tour_label as tour_label, "\
+                " Tour.destination as destination," \
+                " Tour.description as description"\
+        " FROM Payment" \
+        " INNER JOIN Booking ON Booking.id == Payment.booking_id"\
+        " INNER JOIN Tour ON Tour.id == Booking.tour_id"
 
+    connection = sqlite3.connect('agency_database.db')
+    cursor = connection.cursor()
+    all_reocrds = cursor.execute(sql)
+    payments_with_tour = all_reocrds.fetchall()
 
+    column_names = ['booking_id', 'transaction_date', 'transaction_type', 'tour_id', 'tour_label', 'destination', 'description']
+    payment_tuples_list = []
+    for pay in payments_with_tour:
+        payment = list(pay)
+        payment_tuples_list.append(payment)
 
+    connection.close()
+
+    df = pd.DataFrame(payment_tuples_list, index = range(len(payments_with_tour)),columns=column_names)
+
+    grouped = df.groupby(['destination']).agg({'destination': ['count']})
+    grouped.columns = ['count']
+    grouped = grouped.reset_index()
+    grouped = grouped.sort_values('count', ascending=False)
+    top3_dest = grouped.head(3)
+    print(top3_dest)
+
+    plt.bar(top3_dest['destination'], top3_dest['count'], width=0.3)
+    plt.ylabel("Booking Amount")
+    plt.title("Top 3 Destinations")
+    plt.show()
 
 
 def retrieve_all_payment_info():
@@ -84,5 +114,50 @@ def retrieve_all_payment_info():
     connection.close()
     return payments
 
+def show_report_menu():
+    select = 0
+    while select != 7:
+        print("****** Reports *******")
+        print("1. Get Monthly Sales report")
+        print("2. Get Quarter Sales report")
+        print("3. Get Most Popular 3 Destinations Report")
+        print("4. Export Monthly Sales Report")
+        print("5. Export Quarter Sales Report")
+        print("6. Export Most Popular 3 Destinations Report")
+        print("7. Return to Main Menu")
+        print("**********************")
+        error = True
+        while error:
+            try:
+                select = int(input("Select an option: "))
+                error = False
+            except ValueError:
+                print("You should enter a number!")
+                continue
+        if select == 1:
+            year = get_year()
+            generate_monthly_sales_report(year)
+            print("Do you want ??")
+        elif select == 2:
+            year = get_year()
+            generate_quarterly_sales_report(year)
+        elif select == 3:
+            get_top_3_popular_destination()
+        else:
+            return;
+
+def get_year():
+    err = True
+    while err:
+        try:
+            year = int(input("Enter which year you want to analyze: "))
+            error = False
+            return year
+        except ValueError:
+            print("You should enter a number!")
+            continue
+
+
 if __name__ == '__main__':
-    generate_monthly_sales_report(2022)
+    show_report_menu()
+
