@@ -3,6 +3,7 @@ from classes import Payment
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import re
 
 
@@ -38,6 +39,7 @@ def generate_yearly_sales_report():
     yearly_sales = df.groupby(['year'], as_index=False)['amount'].sum()
     print(yearly_sales)
     plt.bar(yearly_sales['year'], yearly_sales['amount'], width=0.4)
+    plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))
     plt.xlabel("Year")
     plt.ylabel("Sales Total $")
     plt.title("Sales by Years")
