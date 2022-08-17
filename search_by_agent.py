@@ -36,19 +36,22 @@ def search_c_email():
     cursor = connection.cursor()
     cursor.execute("Select * from Login where EmailId like ?", ['%'+c_email+'%'])
     results = cursor.fetchall()
-    data = results
-    print(data)
-    username = input("Please enter username of the customer")
-    nameFound = False
-    for row in data:
-        if username == row[1]:
-            nameFound = True
-
-    if nameFound:
-        customer_menu(username)
-        return;
+    if len(results) == 0:
+        print("Email not found.")
     else:
-        print("You entered wrong username!")
+        data = results
+        print(data)
+        username = input("Please enter username of the customer")
+        nameFound = False
+        for row in data:
+            if username == row[1].lower():
+                nameFound = True
+
+        if nameFound:
+            customer_menu(username)
+            return;
+        else:
+            print("You entered wrong username!")
 
 def search_c_name():
     c_name= input("Please Enter the Customer Name: ")
@@ -56,19 +59,22 @@ def search_c_name():
     cursor = connection.cursor()
     cursor.execute("Select * from Login where Name like ?", ['%'+c_name+'%'])
     results = cursor.fetchall()
-    data = results
-    print(data)
-    username = input("Please enter username of the customer")
-    nameFound = False
-    for row in data:
-        if username == row[1]:
-            nameFound = True
-
-    if nameFound:
-        customer_menu(username)
-        return;
+    if len(results) == 0:
+        print("Name not found.")
     else:
-        print("You entered wrong username!")
+        data = results
+        print(data)
+        username = input("Please enter username of the customer")
+        nameFound = False
+        for row in data:
+            if username == row[1].lower():
+                nameFound = True
+
+        if nameFound:
+            customer_menu(username)
+            return;
+        else:
+            print("You entered wrong username!")
 
 
 def customer_menu(username):
