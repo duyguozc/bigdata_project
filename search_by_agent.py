@@ -11,20 +11,23 @@ from classes import Booking
 def search_agent():
     select = 0
     while select != 3:
-        print("\n1. Search by Customer E-mail  \n2. Search by Customer Name \n3. Back to main Menu")
-        select = int(input("Select one of the option: "))
+        try:
+            print("\n1. Search by Customer E-mail  \n2. Search by Customer Name \n3. Back to main Menu")
+            select = int(input("Select one of the option: "))
 
-        if select == 1:
-            search_c_email()
+            if select == 1:
+                search_c_email()
 
-        elif select == 2:
-            search_c_name()
+            elif select == 2:
+                search_c_name()
 
-        elif select == 3:
-            break
-
-        else:
-            print("Please Enter a valid option")
+            elif select == 3:
+                break
+            else:
+                print("Please Enter a valid option")
+        except ValueError:
+            print("You should enter a number")
+            continue
 
 
 def search_c_email():

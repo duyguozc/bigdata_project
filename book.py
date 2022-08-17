@@ -149,7 +149,7 @@ def book_tour(user_id):
 def perform_booking(tour_label_list, user_id):
     tour_label = input("Enter Tour ID: ")
     while not tour_label.upper() in tour_label_list:
-        tour_label = input("Tour ID doen't exist. Please enter an existing id: ")
+        tour_label = input("Tour ID doesn't exist. Please enter an existing id: ")
     record = get_tour_by_tour_label(tour_label.upper())
     tour = Tour(record)
     fare = tour.fare
@@ -267,19 +267,26 @@ def booking_edit_delete_operations(user_id):
 
         error = True
         while error:
-            option = int(input("Select a booking number to edit or delete: "))
-            if option <= len(all_bookings):
-                selected_book = all_bookings[option - 1]
-                edit_or_del = input("Do you want to edit or delete ? (e/d)")
-                if edit_or_del.lower() == 'e':
-                    edit_booking(selected_book.id)
-                elif edit_or_del == 'd':
-                    delete = input("Are you sure? (y/n)")
-                    if delete.lower() == 'y':
-                        delete_booking(selected_book)
-                        print("Your booking is deleted.")
-                error = False
-            else:
-                print('Invalid number. Please choose from booking list!')
+            try:
+                option = int(input("Select a booking number to edit or delete: "))
+                if option <= len(all_bookings):
+                    selected_book = all_bookings[option - 1]
+                    edit_or_del = input("Do you want to edit or delete ? (e/d)")
+                    if edit_or_del.lower() == 'e':
+                        edit_booking(selected_book.id)
+                    elif edit_or_del.lower() == 'd':
+                        delete = input("Are you sure? (y/n)")
+                        if delete.lower() == 'y':
+                            delete_booking(selected_book)
+                            print("Your booking is deleted.")
+                        error = False
+                    else:
+                        print("You should enter a valid option.")
+
+                else:
+                    print('Invalid number. Please choose from booking list!')
+            except ValueError:
+                print("You should enter a number!")
+                continue
     else:
         print("You have no bookings yet.")

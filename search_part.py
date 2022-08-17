@@ -26,8 +26,11 @@ def search_destination():
     cursor = connection.cursor()
     cursor.execute("Select * from Tour where destination like ?", ['%'+destination+'%'])
     results = cursor.fetchall()
-    data = results
-    print(data)
+    if len(results) == 0:
+        print("We have no tour to that destination.")
+    else:
+        data = results
+        print(data)
 
 
 
@@ -43,6 +46,9 @@ def search_month():
     cursor = connection.cursor()
     cursor.execute("Select * from Tour where SUBSTR(start_date, 4,2) = ?", [month])
     results = cursor.fetchall()
-    data = results
-    print(data)
+    if len(results) == 0:
+        print("We have no tour in this month.")
+    else:
+        data = results
+        print(data)
 

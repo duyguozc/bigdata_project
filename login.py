@@ -325,8 +325,11 @@ if __name__ == '__main__':
                                                                 book.print_tour(tour_object)
                                                             tour_label=input("Please enter the tour label you want to update/delete: ")
                                                             tour = book.get_tour_by_tour_label(tour_label)
-                                                            edit_tour.update_delete_tour(tour[0])
-                                                        else:
+                                                            if tour != None:
+                                                                edit_tour.update_delete_tour(tour[0])
+                                                            else:
+                                                                print( "Tour ID doesn't exist.")
+                                                        elif sub == 3:
                                                             e = e + 1
                                                     except ValueError:
                                                         print("You should enter a number!")
