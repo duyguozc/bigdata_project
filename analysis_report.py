@@ -89,7 +89,7 @@ def generate_quarterly_sales_report(year):
         """
         plt.pie(quarterly_sales['amount'], labels=quarterly_sales['quarter'], autopct='%1.1f%%', startangle=90)
 
-        plt.title("Total Profit for each Quarter in Year {}".format(year))
+        plt.title("Total Sales for each Quarter in Year {}".format(year))
         plt.show()
 
 def get_top_3_popular_destination(year):
