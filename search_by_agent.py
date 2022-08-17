@@ -95,7 +95,7 @@ def customer_menu(username):
                 user_id = get_user_id_from_username(username)
                 book.booking_edit_delete_operations(user_id)
             elif selection == 5:
-                return;
+                return
         except ValueError:
             print("You should enter a number!")
             continue

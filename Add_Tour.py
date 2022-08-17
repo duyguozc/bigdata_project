@@ -21,7 +21,7 @@ def addtour():
             print("Error: must be format dd/mm/yyyy ")
             continue
 
-    total_seats = input(' Total NUmber of seats : ')
+    total_seats = input(' Total Number of seats : ')
     destination = input(' Destination: ')
     fare = input(' fare : ')
     description = input(' Tour description : ')
