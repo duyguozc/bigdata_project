@@ -5,6 +5,7 @@ import re
 import datetime
 
 import account_details as account_file
+import analysis_report
 
 import search_part as search_part
 
@@ -335,6 +336,8 @@ if __name__ == '__main__':
                                                             print(
                                                                 "You entered invalid data. Please enter a valid value.")
 
+                                            elif selection == 3:
+                                                analysis_report.show_report_menu()
                                             elif selection == 4:
                                                 d = d + 1
                                                 c = c + 1

@@ -7,7 +7,7 @@ def addtour():
     while True:
         start_date = input(' Tour Start Date : ')
         try:
-            start_date = datetime.datetime.strptime(start_date, "%d/%m/%Y")
+            start_date = datetime.datetime.strptime(start_date, "%d/%m/%Y").date()
             break
         except ValueError:
             print("Error: must be format dd/mm/yyyy ")
@@ -30,7 +30,9 @@ def addtour():
     cursor = connection.cursor()
     sql_insert_query = """INSERT INTO Tour (tour_label, start_date, end_date, total_no_seats, 
                             available_seats, destination, fare, description) values (?,?,?,?,?,?,?,?);"""
-    data_tuple = (tour_label, start_date, end_date, total_seats, total_seats, destination, fare, description)
+    s_date = start_date.strftime("%d/%m/%Y")
+    e_date = end_date.strftime("%d/%m/%Y")
+    data_tuple = (tour_label, s_date, e_date, total_seats, total_seats, destination, fare, description)
     cursor.execute(sql_insert_query, data_tuple)
     cursor.execute("COMMIT;")
     cursor.close()

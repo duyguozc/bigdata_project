@@ -3,6 +3,7 @@ from classes import Payment
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import re
 
 
@@ -38,6 +39,7 @@ def generate_yearly_sales_report():
     yearly_sales = df.groupby(['year'], as_index=False)['amount'].sum()
     print(yearly_sales)
     plt.bar(yearly_sales['year'], yearly_sales['amount'], width=0.4)
+    plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))
     plt.xlabel("Year")
     plt.ylabel("Sales Total $")
     plt.title("Sales by Years")
@@ -87,7 +89,7 @@ def generate_quarterly_sales_report(year):
         """
         plt.pie(quarterly_sales['amount'], labels=quarterly_sales['quarter'], autopct='%1.1f%%', startangle=90)
 
-        plt.title("Total Profit for each Quarter in Year {}".format(year))
+        plt.title("Total Sales for each Quarter in Year {}".format(year))
         plt.show()
 
 def get_top_3_popular_destination(year):
