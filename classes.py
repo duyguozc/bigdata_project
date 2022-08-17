@@ -20,6 +20,7 @@ class Booking:
     self.total_price = booking_tuple[4]
 
 
+
 class Payment:
   def __init__(self, payment_tuple):
     self.user_id = payment_tuple[1]
