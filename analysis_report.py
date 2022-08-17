@@ -157,7 +157,7 @@ def retrieve_all_years_data():
 
 def show_report_menu():
     select = 0
-    while select != 7:
+    while select != 5:
         print("****** Reports *******")
         print("1. Get/Export Yearly Sales report")
         print("2. Get/Export Monthly Sales report")
@@ -173,6 +173,9 @@ def show_report_menu():
             except ValueError:
                 print("You should enter a number!")
                 continue
+            else:
+                if select < 1 or select > 5:
+                    print("You should enter a value between 1 and 5.")
         if select == 1:
             generate_yearly_sales_report()
         elif select == 2:
@@ -184,7 +187,7 @@ def show_report_menu():
         elif select == 4:
             year = get_year()
             get_top_3_popular_destination(year)
-        else:
+        elif select == 5:
             return;
 
 def get_year():
