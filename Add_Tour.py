@@ -30,8 +30,8 @@ def addtour():
     cursor = connection.cursor()
     sql_insert_query = """INSERT INTO Tour (tour_label, start_date, end_date, total_no_seats, 
                             available_seats, destination, fare, description) values (?,?,?,?,?,?,?,?);"""
-    s_date = '\'' + start_date.strftime("%d/%m/%Y") + '\''
-    e_date = '\'' + end_date.strftime("%d/%m/%Y") + '\''
+    s_date = start_date.strftime("%d/%m/%Y")
+    e_date = end_date.strftime("%d/%m/%Y")
     data_tuple = (tour_label, s_date, e_date, total_seats, total_seats, destination, fare, description)
     cursor.execute(sql_insert_query, data_tuple)
     cursor.execute("COMMIT;")
