@@ -79,3 +79,4 @@ def delete_tour(id):
         cursor.execute(sql, [id])
         connection.commit()
         connection.close()
+        print("Tour is deleted successfully.")
